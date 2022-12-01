@@ -12,11 +12,68 @@ namespace AdventOfCode
 
         static void Main(string[] args)
         {
-
-            string cookie = ReadCookie(); 
-            byte[] buffer = GetInput(1, 2021, cookie).Result;
-            Console.WriteLine(Encoding.UTF8.GetString(buffer)); 
+            // Main_Day1(args);
         }
+
+
+        #region Previous Days
+        static void Main_Day1(string[] args)
+        {
+
+            string cookie = ReadCookie();
+            byte[] buffer = GetInput(1, 2022, cookie).Result;
+            string data = Encoding.UTF8.GetString(buffer);
+            int maxCal = Day1Part1(data);
+            // successful day 1! 
+            Console.WriteLine(maxCal);
+            Console.WriteLine(Day1Part2(data));
+            // successful day 2! 
+        }
+        public static int Day1Part1(string data)
+        {
+            string[] elfs = data.Split('\n');
+            List<int> elfCalList = new();
+            int temp = 0; 
+            for(int i = 0; i < elfs.Length; i++)
+            {
+                if (elfs[i] != "")
+                {
+                    temp += Convert.ToInt32(elfs[i]);
+                }
+
+                if (elfs[i] == "")
+                {
+                    elfCalList.Add(temp);
+                    temp = 0; 
+                }
+            }
+
+            return elfCalList.Max(); 
+        }
+        public static int Day1Part2(string data)
+        {
+            string[] elfs = data.Split('\n');
+            List<int> elfCalList = new();
+            int temp = 0;
+            for (int i = 0; i < elfs.Length; i++)
+            {
+                if (elfs[i] != "")
+                {
+                    temp += Convert.ToInt32(elfs[i]);
+                }
+
+                if (elfs[i] == "")
+                {
+                    elfCalList.Add(temp);
+                    temp = 0;
+                }
+            }
+
+            var orderedElfCalList = elfCalList.OrderByDescending(i => i);
+            return orderedElfCalList.Take(3).Sum();
+        }
+#endregion
+        #region Utilities
         /// <summary>
         /// Get the input from the input url depending on day, year and the cookie. Writes to a file in bin. 
         /// </summary>
@@ -63,5 +120,6 @@ namespace AdventOfCode
             using StreamReader reader= new StreamReader(_cookieFile);
             return reader.ReadToEnd(); 
         }
+#endregion
     }
 }
