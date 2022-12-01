@@ -7,15 +7,16 @@ namespace AdventOfCode
     internal class Program
     {
         // cookie value comes from the advent of code website when you are logged in. 
-        private const string _cookieFile = ".cookie"; 
+        private const string _cookieFile = "cookie.cookie"; 
         private static Uri _uri = new Uri("https://adventofcode.com");
 
         static void Main(string[] args)
         {
 
             string cookie = ReadCookie(); 
-            byte[] buffer = GetInput(1, 2021, cookie).Result;
-            Console.WriteLine(Encoding.UTF8.GetString(buffer)); 
+            byte[] buffer = GetInput(1, 2022, cookie).Result;
+            Week1_Problems.Day1Problem1(buffer);
+            //Console.WriteLine(Encoding.UTF8.GetString(buffer)); 
         }
         /// <summary>
         /// Get the input from the input url depending on day, year and the cookie. Writes to a file in bin. 
