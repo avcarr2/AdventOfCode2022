@@ -12,9 +12,60 @@ namespace AdventOfCode
 
         static void Main(string[] args)
         {
-            // Main_Day1(args);
+            string cookie = ReadCookie();
+            byte[] buffer = GetInput(2, 2022, cookie).Result;
+            string data = Encoding.UTF8.GetString(buffer);
+            Main_Day2Part2(data);
         }
 
+        static void Main_Day2Part1(string data)
+        {
+            var splitData = data.Split("\n");
+            int cumScore = 0; 
+            for (int i = 0; i < splitData.Length; i++)
+            {
+                if (splitData[i] == "") continue; 
+                var bytes = Encoding.ASCII.GetBytes(splitData[i]);
+                int tempSum = bytes[2] - bytes[0]; 
+                
+                if (tempSum % 3 == 0)
+                {
+                    cumScore += 6 + bytes[2] - 87; 
+                }
+                if (tempSum % 3 == 1)
+                {
+                    cumScore += 0 + bytes[2] - 87; 
+                }
+                if (tempSum % 3 == 2)
+                {
+                    cumScore += 3 + bytes[2] - 87; 
+                }
+            }
+
+            Console.WriteLine(cumScore);
+        }
+        static void Main_Day2Part2(string data)
+        {
+            var splitData = data.Split("\n");
+            int cumScore = 0;
+            for (int i = 0; i < splitData.Length; i++)
+            {
+                if (splitData[i] == "") continue;
+                var bytes = Encoding.ASCII.GetBytes(splitData[i]);
+                // Lose = X (88); Win = Z(90); Draw = Y(89); 
+                //int tempSum = bytes[2] - bytes[0];
+                // calculate round score
+
+                // tempSum tells you what you're playing. 
+                int playScore = ((bytes[2] + bytes[0] - 64) % 3) + 1; 
+                // winVal gives the score of the outcome. 
+                int winVal = 6 - 3 * (90 - bytes[2]);
+
+                cumScore += (playScore + winVal);
+            }
+
+            Console.WriteLine(cumScore);
+        }
 
         #region Previous Days
         static void Main_Day1(string[] args)
