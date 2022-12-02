@@ -15,8 +15,9 @@ namespace AdventOfCode
 
             string cookie = ReadCookie(); 
             byte[] buffer = GetInput(1, 2022, cookie).Result;
-            Week1_Problems.Day1Problem1(buffer);
-            //Console.WriteLine(Encoding.UTF8.GetString(buffer)); 
+            //Week1_Problems.Day1Problem1(buffer);
+            Week1_Problems.Day2(GetInput(2, 2022, cookie).Result);
+            //
         }
         /// <summary>
         /// Get the input from the input url depending on day, year and the cookie. Writes to a file in bin. 
@@ -39,7 +40,7 @@ namespace AdventOfCode
                 await stream.CopyToAsync(file);
         }
 
-        static async Task<byte[]> GetInput(int day, int year, string cookie)
+        public static async Task<byte[]> GetInput(int day, int year, string cookie)
         {
 
             using MemoryStream ms = new(); 
