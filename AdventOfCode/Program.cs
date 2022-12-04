@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using System.Net;
 using System.Text;
 using System.Xml;
 
@@ -13,11 +14,9 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
 
-            string cookie = ReadCookie(); 
-            byte[] buffer = GetInput(1, 2022, cookie).Result;
-            //Week1_Problems.Day1Problem1(buffer);
-            Week1_Problems.Day2(GetInput(2, 2022, cookie).Result);
-            //
+            string cookie = ReadCookie();
+            Week1_Problems.Day3Part2(GetInput(3, 2022, cookie).Result);
+
         }
         /// <summary>
         /// Get the input from the input url depending on day, year and the cookie. Writes to a file in bin. 

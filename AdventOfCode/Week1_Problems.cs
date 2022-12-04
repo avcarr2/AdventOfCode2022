@@ -114,7 +114,106 @@ namespace AdventOfCode
             Console.WriteLine("Total Corrected RPS score  = " + part2ScoreTotal.ToString());
         }
 
+        public static void Day3(byte[] buffer)
+        {
+            string[] stringArray = Encoding.UTF8.GetString(buffer).Split('\n');
 
+            Dictionary<char, int> firstCompartment = new();
+            int prioritySum = 0;
+            foreach(string sack in stringArray)
+            {
+                firstCompartment.Clear();
+                char[] itemArray = sack.ToCharArray();
+                // iterate through the first compartment, storing each item + the number of occurences
+                for (int i = 0; i < itemArray.Length/2; i++)
+                {
+                    if(!firstCompartment.TryAdd(itemArray[i], 1))
+                    {
+                        firstCompartment[itemArray[i]]++;
+                    }
+                }
+                for (int j = itemArray.Length/2; j < itemArray.Length; j++)
+                {
+                    if (firstCompartment.TryGetValue(itemArray[j], out int itemCount) &&
+                        itemCount > 0)
+                    {
+                        prioritySum += ConvertCharToPriority(itemArray[j]);
+                        break;
+                    }
+                }
+            }
+            Console.WriteLine("The sum of the priority values for the misassigned objects = " + prioritySum.ToString());
+        }
+
+        public static void Day3Part2(byte[] buffer)
+        {
+            string[] stringArray = Encoding.UTF8.GetString(buffer).Split('\n').Where(s => !String.IsNullOrEmpty(s)).ToArray();
+
+            int badgeSum = 0;
+            if (stringArray.Length % 3 > 0) throw new InvalidDataException("The input isn't grouped by threes");
+
+            List<char> elfSack = new();
+            Dictionary<char, int> groupSacks = new();
+            for (int i = 0; i < stringArray.Length/3; i++)
+            {
+                int[] groupIndices = new int[]
+                {
+                    0 + i*3,
+                    1 + i*3,
+                    2 + i*3
+                };
+                groupSacks.Clear();
+
+                // store contents of the first elf's sack in groupSacks dictionary
+                elfSack.Clear();
+                elfSack.AddRange(stringArray[groupIndices[0]]);
+                foreach (char item in elfSack)
+                {
+                    groupSacks.TryAdd(item, 1);
+                }
+
+                // find overlap between first and second elf
+                elfSack.Clear();
+                elfSack.AddRange(stringArray[groupIndices[1]]);
+                foreach (char item in elfSack)
+                {
+                    if (groupSacks.ContainsKey(item))
+                    {
+                        groupSacks[item]++;
+                    }
+                }
+
+                // find overlap between all three
+                elfSack.Clear();
+                elfSack.AddRange(stringArray[groupIndices[2]]);
+                foreach (char item in elfSack)
+                {
+                    if (groupSacks.ContainsKey(item) && groupSacks[item] >= 2)
+                    {
+                        badgeSum += ConvertCharToPriority(item);
+                        break;
+                    }
+                }
+            }
+
+            Console.WriteLine("The sum of the badge numbers for each group is " + badgeSum.ToString());
+        }
+
+        private static int ConvertCharToPriority(char c)
+        {
+            int charASCII = (int)c;
+            // convert all lowercase characters to their respective priority values
+            if (charASCII >= 97 & charASCII <= 122)
+            {
+                return charASCII - 96;
+            } 
+            // convert upercase characters
+            else if (charASCII >= 65 & charASCII <= 90)
+            {
+                return charASCII - 38;
+            }
+            return 0;
+        }
 
     }
 }
