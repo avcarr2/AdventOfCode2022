@@ -1,5 +1,8 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace AdventOfCode
@@ -13,32 +16,115 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             string cookie = ReadCookie();
-            byte[] buffer = GetInput(2, 2022, cookie).Result;
+            byte[] buffer = GetInput(3, 2022, cookie).Result;
             string data = Encoding.UTF8.GetString(buffer);
-            Main_Day2Part2(data);
+            int result = Main_Day3Part2(data);
+            Console.WriteLine(result);
         }
+
+        static int Main_Day3Part2(string data)
+        {
+            var splitData = data.Split("\n");
+            char[] lower = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+            char[] upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+            int totalScore = 0; 
+            // find intersection.intersection.intersection of every three 
+            for (int i = 0; i < splitData.Length - 3; i += 3)
+            {
+                var temp = splitData[i..(i + 3)];
+                var intersectChar = temp[0].Intersect(temp[1]).Intersect(temp[2]);
+
+                if (!intersectChar.Any()) continue;
+
+                if (lower.Contains(intersectChar.First()))
+                {
+                    // lower case priority is 1 - 26.
+                    // convert to ascii because C# cast to byte defaults to utf, 
+                    // and I didn't want to learn how to do math in hexadecimal today, thanks. 
+                    totalScore += Encoding.ASCII.GetBytes(intersectChar.First().ToString())[0] - 96;
+                    continue; 
+                }
+
+                if (upper.Contains(intersectChar.First()))
+                {
+                    // upper case priority is 27-52. 
+                    // so subtract 38 = x - 96 + 26. 
+                    totalScore += Encoding.ASCII.GetBytes(intersectChar.First().ToString())[0] - 38; 
+                }
+            }
+            return totalScore; 
+        }
+
+        static void Main_Day3Part1(string data)
+        {
+            var splitData = data.Split("\n");
+            char[] lower = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
+            char[] upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+            int sum = 0; 
+            for (int i = 0; i < splitData.Length; i++)
+            {
+                if (splitData[i] == "") continue; 
+                // split each string into 2 based on length. 
+                int stringLength = splitData[i].Length;
+                int splitIndex = stringLength / 2; 
+                string compartment1 = splitData[i].Substring(0, splitIndex);
+                string compartment2 = splitData[i].Substring(splitIndex);
+                
+                // find common letters between the two compartments 
+                var commonList = compartment1.Intersect(compartment2);
+                var commonList2 = compartment2.Intersect(compartment1);
+                
+                var commonChars = commonList2.Concat(commonList).Distinct(); 
+
+                int temp = 0;
+                foreach (char c in commonChars)
+                {
+                    if (lower.Contains(c))
+                    {
+                        // lower case priority is 1 - 26.
+                        temp += (Encoding.ASCII.GetBytes(c.ToString())[0] - 96); 
+                    }
+
+                    if (upper.Contains(c))
+                    {
+                        // upper case priority is 27-52. 
+                        temp += (Encoding.ASCII.GetBytes(c.ToString())[0] - 38); 
+                    }
+                }
+                sum += temp;
+            }
+
+            Console.WriteLine(sum);
+
+        }
+
+
+
+        #region Previous Days
 
         static void Main_Day2Part1(string data)
         {
             var splitData = data.Split("\n");
-            int cumScore = 0; 
+            int cumScore = 0;
             for (int i = 0; i < splitData.Length; i++)
             {
-                if (splitData[i] == "") continue; 
+                if (splitData[i] == "") continue;
                 var bytes = Encoding.ASCII.GetBytes(splitData[i]);
-                int tempSum = bytes[2] - bytes[0]; 
-                
+                int tempSum = bytes[2] - bytes[0];
+
                 if (tempSum % 3 == 0)
                 {
-                    cumScore += 6 + bytes[2] - 87; 
+                    cumScore += 6 + bytes[2] - 87;
                 }
                 if (tempSum % 3 == 1)
                 {
-                    cumScore += 0 + bytes[2] - 87; 
+                    cumScore += 0 + bytes[2] - 87;
                 }
                 if (tempSum % 3 == 2)
                 {
-                    cumScore += 3 + bytes[2] - 87; 
+                    cumScore += 3 + bytes[2] - 87;
                 }
             }
 
@@ -57,7 +143,7 @@ namespace AdventOfCode
                 // calculate round score
 
                 // tempSum tells you what you're playing. 
-                int playScore = ((bytes[2] + bytes[0] - 64) % 3) + 1; 
+                int playScore = ((bytes[2] + bytes[0] - 64) % 3) + 1;
                 // winVal gives the score of the outcome. 
                 int winVal = 6 - 3 * (90 - bytes[2]);
 
@@ -66,8 +152,6 @@ namespace AdventOfCode
 
             Console.WriteLine(cumScore);
         }
-
-        #region Previous Days
         static void Main_Day1(string[] args)
         {
 
