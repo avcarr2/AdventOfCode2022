@@ -16,12 +16,83 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             string cookie = ReadCookie();
-            byte[] buffer = GetInput(3, 2022, cookie).Result;
+            byte[] buffer = GetInput(4, 2022, cookie).Result;
             string data = Encoding.UTF8.GetString(buffer);
-            int result = Main_Day3Part2(data);
-            Console.WriteLine(result);
+            Console.WriteLine(Main_Day4Part2(data));
         }
 
+        static int Main_Day4Part2(string data)
+        {
+            int sum = 0;
+            string[] dataSplit = data.Split("\n");
+            // find any and all overlapping pairs. 
+            for (int i = 0; i < dataSplit.Length; i++)
+            {
+                if (dataSplit[i] == "") continue;
+                var tempData = dataSplit[i].Split(new char[] { '-', ',' });
+                int[] tempDataInt = tempData.Select(i => int.Parse(i)).ToArray();
+
+                // take last number and subtract second number in first pair
+                // if the number is negative, it overlaps, 
+                // if the number is positive, then subtract the first number 
+                // in the second pair from the second number in the first pair
+                // If that's still positive, they don't overlap 
+                int temp = tempDataInt[3] - tempDataInt[1];
+                if (temp <= 0)
+                {
+                    if (tempDataInt[3] - tempDataInt[0] < 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        sum++;
+                    }
+                }
+                else
+                {
+                    temp = tempDataInt[2] - tempDataInt[1];
+                    if (temp <= 0)
+                    {
+                        sum++;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            return sum;
+        }
+
+
+        static int Main_Day4Part1(string data)
+        {
+            int sum = 0;
+
+            string[] dataSplit = data.Split("\n");
+
+            for (int i = 0; i < dataSplit.Length; i++)
+            {
+                if (dataSplit[i] == "") continue; 
+                var tempData = dataSplit[i].Split(new char[] {'-', ','});
+                // temp data should be length four, so iterate over that. 
+                // ? Get the max and the min vals, then compare? 
+                int[] tempDataInt = tempData.Select(i => int.Parse(i)).ToArray();
+                // if 0 is greater than 2 and 4 is greater than 3, it's fully contained. 
+                
+                if ((tempDataInt[2] <= tempDataInt[0] && tempDataInt[3] >= tempDataInt[1]) ||
+                    (tempDataInt[0] <= tempDataInt[2] && tempDataInt[1] >= tempDataInt[3]))
+                {
+                    sum++; 
+                }
+            }
+
+            return sum; 
+        }
+
+        #region Previous Days
         static int Main_Day3Part2(string data)
         {
             var splitData = data.Split("\n");
@@ -55,6 +126,7 @@ namespace AdventOfCode
             }
             return totalScore; 
         }
+
 
         static void Main_Day3Part1(string data)
         {
@@ -101,8 +173,6 @@ namespace AdventOfCode
         }
 
 
-
-        #region Previous Days
 
         static void Main_Day2Part1(string data)
         {
