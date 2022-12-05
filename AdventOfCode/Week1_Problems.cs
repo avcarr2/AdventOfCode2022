@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 
 namespace AdventOfCode
 {
@@ -215,5 +217,56 @@ namespace AdventOfCode
             return 0;
         }
 
+        public static void Day4(byte[] buffer)
+        {
+            // Find consecutive digits
+            Regex regex = new Regex(@"\D+");
+            string[] stringArray = Encoding.UTF8.GetString(buffer).Split('\n').Where(s => !String.IsNullOrEmpty(s)).ToArray();
+
+            int numberOfSubsets = 0;
+            List<int> zoneList = new();
+            bool overlap = false;
+            int numberOfOverlaps = 0;
+            foreach(string zoneRange in stringArray)
+            {
+                overlap = false;
+                zoneList.Clear();
+                zoneList.AddRange(regex.Split(zoneRange).Select(d => Int32.Parse(d)));
+                if (zoneList.Count > 4) throw new InvalidDataException("More than four entries were found for " + zoneRange);
+
+                if (zoneList[0] <= zoneList[2])
+                {
+                    if (zoneList[1] >= zoneList[3])
+                    {
+                        numberOfSubsets++;
+                        numberOfOverlaps++;
+                        continue;
+                    }
+                    if (zoneList[1] >= zoneList[2])
+                    {
+                        overlap = true;
+                    }
+                }
+                if (zoneList[0] >= zoneList[2])
+                {
+                    if (zoneList[1] <= zoneList[3])
+                    {
+                        numberOfSubsets++;
+                        numberOfOverlaps++;
+                        continue;
+                    }
+                    if (zoneList[0] <= zoneList[3])
+                    {
+                        overlap = true;
+                    }
+                }
+                if (overlap)
+                {
+                    numberOfOverlaps++;
+                }
+            }
+            Console.WriteLine("Total number of subsets is {0}, and the number of overlaps is {1}",
+                numberOfSubsets.ToString(), numberOfOverlaps.ToString());
+        }
     }
 }
