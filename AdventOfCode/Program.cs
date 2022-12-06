@@ -18,11 +18,55 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             string cookie = ReadCookie();
-            byte[] buffer = GetInput(5, 2022, cookie).Result;
-            string[] data = Encoding.UTF8.GetString(buffer).Split("\n");
-
-            Main_Day5Part2(data);
+            byte[] buffer = GetInput(6, 2022, cookie).Result;
+            string data = Encoding.UTF8.GetString(buffer); 
+            int result = Main_Day6Part2(data);
+            Console.WriteLine(result);
         }
+        static int Main_Day6Part2(string data)
+        {
+            // split data into a list of char and feed it into a queue 
+            Queue<char> charQ = new Queue<char>();
+            for (int i = 0; i < data.Length; i++)
+            {
+                charQ.Enqueue(data[i]);
+                if (charQ.Count >= 14)
+                {
+                    if (charQ.CheckQueuePart2())
+                    {
+                        return i + 1;
+                    }
+
+                    charQ.Dequeue();
+                }
+            }
+
+            return -1;
+        }
+
+        static int Main_Day6Part1(string data)
+        {
+            // split data into a list of char and feed it into a queue 
+            Queue<char> charQ = new Queue<char>();
+            for (int i = 0; i < data.Length; i++)
+            {
+                charQ.Enqueue(data[i]);
+                if (charQ.Count >= 4)
+                {
+                    if (charQ.CheckQueue())
+                    {
+                        return i + 1; 
+                    }
+
+                    charQ.Dequeue(); 
+                }
+            }
+
+            return -1; 
+        }
+
+
+        #region Previous Days
         static void Main_Day5Part2(string[] data)
         {
             // split the stacks from the instructions. 
@@ -120,7 +164,6 @@ namespace AdventOfCode
             cargoStackList.GetTopOfStack();
         }
 
-        #region Previous Days
         static int Main_Day4Part2(string data)
         {
             int sum = 0;
