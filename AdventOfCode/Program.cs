@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -16,11 +18,109 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             string cookie = ReadCookie();
-            byte[] buffer = GetInput(4, 2022, cookie).Result;
-            string data = Encoding.UTF8.GetString(buffer);
-            Console.WriteLine(Main_Day4Part2(data));
+            byte[] buffer = GetInput(5, 2022, cookie).Result;
+            string[] data = Encoding.UTF8.GetString(buffer).Split("\n");
+
+            Main_Day5Part2(data);
+        }
+        static void Main_Day5Part2(string[] data)
+        {
+            // split the stacks from the instructions. 
+            char[,] stackInfo = new char[9, 36];
+            for (int i = 0; i < 9; i++)
+            {
+
+                for (int j = 1; j < 36; j += 4)
+                {
+                    stackInfo[i, j] = data[i][j];
+                }
+            }
+            // create a linked list for each stack
+            List<CargoStack> cargoStackList = new List<CargoStack>();
+            int stackPosition = 1;
+
+            for (int i = 1; i < stackInfo.GetLength(1); i += 4)
+            {
+
+                List<Cargo> tempList = new();
+                for (int j = 0; j < stackInfo.GetLength(0) - 1; j++)
+                {
+                    if (stackInfo[j, i].ToString() == " ") continue;
+                    tempList.Add(new Cargo(stackInfo[j, i].ToString()));
+                }
+
+                CargoStack tempCargoStack = new CargoStack();
+                tempList.Reverse();
+                tempCargoStack.CargoLl = new Stack<Cargo>(tempList);
+                tempCargoStack.StackPosition = stackPosition;
+                stackPosition++;
+                cargoStackList.Add(tempCargoStack);
+
+            }
+
+            string[] instructions = data[9..];
+            for (int i = 0; i < instructions.Length; i++)
+            {
+                if (instructions[i] == "") continue;
+                int[] instructionsIntArray = instructions[i].InstructionsLineToIntTupe();
+
+                cargoStackList.ExecuteInstructionPart2(instructionsIntArray[0],
+                    instructionsIntArray[1],
+                    instructionsIntArray[2]);
+            }
+            cargoStackList.GetTopOfStack();
+
         }
 
+        static void Main_Day5Part1(string[] data)
+        {
+            // split the stacks from the instructions. 
+            char[,] stackInfo = new char[9, 36]; 
+            for (int i = 0; i < 9; i++)
+            {
+                
+                for (int j = 1; j < 36; j += 4)
+                {
+                    stackInfo[i,j] = data[i][j]; 
+                }
+            }
+            // create a linked list for each stack
+            List<CargoStack> cargoStackList = new List<CargoStack>();
+            int stackPosition = 1;
+
+            for (int i = 1; i < stackInfo.GetLength(1); i+=4)
+            {
+
+                List<Cargo> tempList = new(); 
+                for (int j = 0; j < stackInfo.GetLength(0) - 1; j++)
+                {
+                    if (stackInfo[j, i].ToString() == " ") continue;
+                    tempList.Add(new Cargo(stackInfo[j,i].ToString())); 
+                }
+                
+                CargoStack tempCargoStack = new CargoStack();
+                tempList.Reverse(); 
+                tempCargoStack.CargoLl = new Stack<Cargo>(tempList); 
+                tempCargoStack.StackPosition = stackPosition;
+                stackPosition++;
+                cargoStackList.Add(tempCargoStack);
+
+            }
+
+            string[] instructions = data[9..];
+            for (int i = 0; i < instructions.Length; i++)
+            {
+                if (instructions[i] == "") continue; 
+                int[] instructionsIntArray = instructions[i].InstructionsLineToIntTupe();
+
+                cargoStackList.ExecuteInstruction(instructionsIntArray[0], 
+                    instructionsIntArray[1],
+                    instructionsIntArray[2]);
+            }
+            cargoStackList.GetTopOfStack();
+        }
+
+        #region Previous Days
         static int Main_Day4Part2(string data)
         {
             int sum = 0;
@@ -92,7 +192,7 @@ namespace AdventOfCode
             return sum; 
         }
 
-        #region Previous Days
+        
         static int Main_Day3Part2(string data)
         {
             var splitData = data.Split("\n");
