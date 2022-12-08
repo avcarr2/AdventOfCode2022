@@ -10,6 +10,12 @@ namespace AdventOfCode
 {
     public class Week1_Problems
     {
+        public static string[] BufferToStrings(byte[] buffer, char split)
+        {
+            string[] stringArray = Encoding.UTF8.GetString(buffer).Split(split);
+            return stringArray;
+        }
+
         public static void Day1Problem1(byte[] buffer)
         {
             string[] stringArray = Encoding.UTF8.GetString(buffer).Split( "\n\n" );
@@ -267,6 +273,67 @@ namespace AdventOfCode
             }
             Console.WriteLine("Total number of subsets is {0}, and the number of overlaps is {1}",
                 numberOfSubsets.ToString(), numberOfOverlaps.ToString());
+        }
+
+        public static void Day5(byte[] buffer)
+        {
+            // initialize ship
+            Stack<char>[] ship = new Stack<char>[9];
+            for(int i = 1; i < 10; i++)
+            {
+                ship[i] = new();
+            }
+
+            string[] input = BufferToStrings(buffer, '\n');
+            int line = 0;
+            // load ship
+            for (line = 0; line < input.Length; line++)
+            {
+                //break before instructions
+                if (String.IsNullOrWhiteSpace(input[line]))
+                {
+                    line++;
+                    break;
+                }
+
+                char[] row = input[line].ToCharArray();
+                for (int col = 0; col < 9; col++)
+                {
+                    ship[col].Push(row[col * 4 + 1]);
+                }
+
+            }
+
+            foreach (var stack in ship)
+            {
+                stack = ReverseStack(stack);
+            }
+
+            for (int i=line; i < input.Length; i++)
+            {
+
+            }
+        }
+
+        public static Stack<char> ReverseStack(Stack<char> forwardStack)
+        {
+            Stack<char> reverseStack = ReverseStackHelper(forwardStack.Pop(), forwardStack);
+            return reverseStack;
+        }
+
+        public static Stack<char> ReverseStackHelper(char box, Stack<char> stack)
+        {
+            if (stack.TryPop(out var newBox))
+            {
+                ReverseStackHelper(box, stack);
+                stack.Push(newBox);
+            }
+            else
+            {
+                stack.Push(box);
+            }
+
+            return stack;
         }
     }
 }
