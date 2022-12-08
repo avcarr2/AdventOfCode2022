@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,11 +19,46 @@ namespace AdventOfCode
         static void Main(string[] args)
         {
             string cookie = ReadCookie();
-            byte[] buffer = GetInput(6, 2022, cookie).Result;
-            string data = Encoding.UTF8.GetString(buffer); 
-            int result = Main_Day6Part2(data);
-            Console.WriteLine(result);
+            byte[] buffer = GetInput(7, 2022, cookie).Result;
+            string data = Encoding.UTF8.GetString(buffer);
+            Main_Day7Part1(data); 
+            
         }
+
+        static int Main_Day7Part1(string data)
+        {
+            int totalSpace = 70000000;
+            int neededSpace = 30000000; 
+            string[] splitData = data.Split("\n");
+            Day7Parsers parser = new();
+            // read the first line. 
+            int lineNumber = 0;
+            Node firstNode = new Node("/");
+            lineNumber++; 
+            Node resultNode = parser.ParseLine(splitData, firstNode, lineNumber);
+            
+
+            int lessThan100kSum = 0;
+            List<double> sizes = new List<double>(); 
+            foreach (Node node in firstNode.Traverse(firstNode, i => i.Children))
+            {
+                sizes.Add(node.Size); 
+            }
+
+            var part1Result = sizes.Where(i => i <= 100000)
+                .Sum(); 
+            
+
+            // part2 
+            int usedSpace = firstNode.Size;
+            int spaceToFree = usedSpace - (totalSpace - neededSpace);
+            var part2Result = sizes
+                .OrderBy(i => i)
+                .First(i => i >= spaceToFree); 
+
+            return 0; 
+        }
+        #region Previous Days
         static int Main_Day6Part2(string data)
         {
             // split data into a list of char and feed it into a queue 
@@ -40,7 +76,6 @@ namespace AdventOfCode
                     charQ.Dequeue();
                 }
             }
-
             return -1;
         }
 
@@ -66,7 +101,6 @@ namespace AdventOfCode
         }
 
 
-        #region Previous Days
         static void Main_Day5Part2(string[] data)
         {
             // split the stacks from the instructions. 
