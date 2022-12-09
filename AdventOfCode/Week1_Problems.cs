@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,11 +11,66 @@ namespace AdventOfCode
 {
     public class Week1_Problems
     {
+
+        public static void Day6(byte[] buffer)
+        {
+            char[] signalArray = BufferToChars(buffer);
+            Queue<char> queue = new Queue<char>();
+            for(int i = 0; i < signalArray.Length; i++)
+            {
+                queue.Enqueue(signalArray[i]);
+                if(queue.Count >= 5)
+                {
+                    queue.Dequeue();
+                    if (!CheckDuplicate(queue))
+                    {
+                        Console.WriteLine("Key encountered ending at postition {0}", i + 1);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private static bool CheckDuplicate<T>(Queue<T> queue)
+        {
+            Queue<T> queueCopy = new Queue<T>(queue);
+            Dictionary<T, int> queueDict = new();
+            while (queueCopy.TryDequeue(out var nextItem))
+            {
+                if (!queueDict.TryAdd(nextItem, 1)) return true;
+
+            }
+            return false;
+        }
+
+
+        #region helperFunctions
+
+        public static char[] BufferToChars(byte[] buffer)
+        {
+            char[] chars = Encoding.UTF8.GetChars(buffer);
+            return chars;
+        }
+
         public static string[] BufferToStrings(byte[] buffer, char split)
         {
             string[] stringArray = Encoding.UTF8.GetString(buffer).Split(split);
             return stringArray;
         }
+
+        public static Stack<T> ReverseStack<T>(Stack<T> forwardStack)
+        {
+            Stack<T> reverseStack = new();
+            while (forwardStack.TryPop(out var box))
+            {
+                reverseStack.Push(box);
+            }
+            return reverseStack;
+        }
+
+        #endregion
+
+        #region previousDays
 
         public static void Day1Problem1(byte[] buffer)
         {
@@ -279,7 +335,7 @@ namespace AdventOfCode
         {
             // initialize ship
             Stack<char>[] ship = new Stack<char>[9];
-            for(int i = 1; i < 10; i++)
+            for(int i = 0; i < 9; i++)
             {
                 ship[i] = new();
             }
@@ -299,41 +355,62 @@ namespace AdventOfCode
                 char[] row = input[line].ToCharArray();
                 for (int col = 0; col < 9; col++)
                 {
-                    ship[col].Push(row[col * 4 + 1]);
+                    if (Char.IsLetter(row[col * 4 + 1]))
+                    {
+                        ship[col].Push(row[col * 4 + 1]);
+                    }
                 }
-
             }
 
-            foreach (var stack in ship)
+            // flip stacks 
+            for (int i = 0; i<9; i++)
             {
-                stack = ReverseStack(stack);
+                ship[i] = ReverseStack(ship[i]);
             }
 
-            for (int i=line; i < input.Length; i++)
+            // Parse instructions
+            // Part 1
+            Regex regex = new Regex(@"\D+");
+            //for (int i=line; i < input.Length; i++)
+            //{
+            //    if (string.IsNullOrWhiteSpace(input[i])) break;
+            //    string[] instructionNumbers = regex.Split(input[i]);
+            //    int[] instructions = regex.Split(input[i]).Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
+            //    for(int j = 1; j <= instructions[0]; j++)
+            //    {
+            //        ship[instructions[2]-1].Push(ship[instructions[1]-1].Pop());
+            //    }
+            //}
+
+            // Part 2
+            for (int i = line; i < input.Length; i++)
             {
-
+                if (string.IsNullOrWhiteSpace(input[i])) break;
+                Stack<char> tempStack = new Stack<char>();
+                string[] instructionNumbers = regex.Split(input[i]);
+                int[] instructions = regex.Split(input[i]).Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
+                for (int j = 1; j <= instructions[0]; j++)
+                {
+                    tempStack.Push(ship[instructions[1] - 1].Pop());
+                }
+                while(tempStack.TryPop(out char box))
+                {
+                    ship[instructions[2] - 1].Push(box);
+                }
             }
+
+            Console.WriteLine("The top of the stack reads: {0} {1} {2} {3} {4} {5} {6} {7} {8}", 
+                ship[0].Peek(),
+                ship[1].Peek(),
+                ship[2].Peek(),
+                ship[3].Peek(),
+                ship[4].Peek(),
+                ship[5].Peek(),
+                ship[6].Peek(),
+                ship[7].Peek(),
+                ship[8].Peek());
         }
 
-        public static Stack<char> ReverseStack(Stack<char> forwardStack)
-        {
-            Stack<char> reverseStack = ReverseStackHelper(forwardStack.Pop(), forwardStack);
-            return reverseStack;
-        }
-
-        public static Stack<char> ReverseStackHelper(char box, Stack<char> stack)
-        {
-            if (stack.TryPop(out var newBox))
-            {
-                ReverseStackHelper(box, stack);
-                stack.Push(newBox);
-            }
-            else
-            {
-                stack.Push(box);
-            }
-
-            return stack;
-        }
+        #endregion
     }
 }
