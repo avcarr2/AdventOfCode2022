@@ -12,14 +12,15 @@ namespace AdventOfCode
     public class Week1_Problems
     {
 
-        public static void Day6(byte[] buffer)
+        public static void Day6(byte[] buffer, bool part2 = false)
         {
             char[] signalArray = BufferToChars(buffer);
             Queue<char> queue = new Queue<char>();
+            int markerLength = part2 ? 14 : 4;
             for(int i = 0; i < signalArray.Length; i++)
             {
                 queue.Enqueue(signalArray[i]);
-                if(queue.Count >= 5)
+                if(queue.Count >= markerLength + 1)
                 {
                     queue.Dequeue();
                     if (!CheckDuplicate(queue))
