@@ -81,27 +81,19 @@ namespace AdventOfCode
             grid.RemoveAt(rowIndex);
             rowIndex--;
 
-            //grid = new List<int[]>
-            //{
-            //    new int[] { 3, 0, 3, 7, 3 },
-            //    new int[] { 2, 5, 5, 1, 2 },
-            //    new int[] { 6, 5, 3, 3, 2 },
-            //    new int[] { 3, 3, 5, 4, 9 },
-            //    new int[] { 3, 5, 3, 9, 0 }
-            //};
-            //rowLength = 5;
-
             int numRows = grid.Count;
             bool[,] invisibleGrid = new bool[numRows, rowLength];
             int[,] scoreGrid = new int[numRows, rowLength]; 
-            foreach(var row in grid)
-            {
-                foreach(int number in row)
-                {
-                    Console.Write(number.ToString());
-                }
-                Console.Write('\n');
-            }
+            
+            // ensure input was read in correctly
+            //foreach(var row in grid)
+            //{
+            //    foreach(int number in row)
+            //    {
+            //        Console.Write(number.ToString());
+            //    }
+            //    Console.Write('\n');
+            //}
 
             // Check for horizontal invisibility
             int leftMax = 0;
@@ -194,7 +186,7 @@ namespace AdventOfCode
                 }
             }
 
-            Console.WriteLine("The number of completely invisible trees = {0}", invisibleGrid.Cast<bool>().Count(t => !t));
+            Console.WriteLine("The number of visible trees = {0}", invisibleGrid.Cast<bool>().Count(t => !t));
             Console.WriteLine("The most scenic view has a tree score of {0}", scoreGrid.Cast<int>().Max());
         }
 
