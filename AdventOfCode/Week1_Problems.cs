@@ -12,39 +12,6 @@ namespace AdventOfCode
     public class Week1_Problems
     {
 
-        public static void Day6(byte[] buffer, bool part2 = false)
-        {
-            char[] signalArray = BufferToChars(buffer);
-            Queue<char> queue = new Queue<char>();
-            int markerLength = part2 ? 14 : 4;
-            for(int i = 0; i < signalArray.Length; i++)
-            {
-                queue.Enqueue(signalArray[i]);
-                if(queue.Count >= markerLength + 1)
-                {
-                    queue.Dequeue();
-                    if (!CheckDuplicate(queue))
-                    {
-                        Console.WriteLine("Key encountered ending at postition {0}", i + 1);
-                        break;
-                    }
-                }
-            }
-        }
-
-        private static bool CheckDuplicate<T>(Queue<T> queue)
-        {
-            Queue<T> queueCopy = new Queue<T>(queue);
-            Dictionary<T, int> queueDict = new();
-            while (queueCopy.TryDequeue(out var nextItem))
-            {
-                if (!queueDict.TryAdd(nextItem, 1)) return true;
-
-            }
-            return false;
-        }
-
-
         #region helperFunctions
 
         public static char[] BufferToChars(byte[] buffer)
@@ -58,6 +25,19 @@ namespace AdventOfCode
             string[] stringArray = Encoding.UTF8.GetString(buffer).Split(split);
             return stringArray;
         }
+
+        private static bool CheckDuplicate<T>(Queue<T> queue) where T : struct
+        {
+            Queue<T> queueCopy = new Queue<T>(queue);
+            Dictionary<T, int> queueDict = new();
+            while (queueCopy.TryDequeue(out var nextItem))
+            {
+                if (!queueDict.TryAdd(nextItem, 1)) return true;
+
+            }
+            return false;
+        }
+
 
         public static Stack<T> ReverseStack<T>(Stack<T> forwardStack)
         {
@@ -410,6 +390,26 @@ namespace AdventOfCode
                 ship[6].Peek(),
                 ship[7].Peek(),
                 ship[8].Peek());
+        }
+
+        public static void Day6(byte[] buffer, bool part2 = false)
+        {
+            char[] signalArray = BufferToChars(buffer);
+            Queue<char> queue = new Queue<char>();
+            int markerLength = part2 ? 14 : 4;
+            for (int i = 0; i < signalArray.Length; i++)
+            {
+                queue.Enqueue(signalArray[i]);
+                if (queue.Count >= markerLength + 1)
+                {
+                    queue.Dequeue();
+                    if (!CheckDuplicate(queue))
+                    {
+                        Console.WriteLine("Key encountered ending at postition {0}", i + 1);
+                        break;
+                    }
+                }
+            }
         }
 
         #endregion
