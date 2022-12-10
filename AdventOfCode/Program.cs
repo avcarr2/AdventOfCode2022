@@ -15,7 +15,7 @@ namespace AdventOfCode
         {
 
             string cookie = ReadCookie();
-            Day7.RunDay7(GetInput(7, 2022, cookie).Result, true);
+            Week2.Day8(GetInput(8, 2022, cookie).Result, false);
 
         }
         /// <summary>

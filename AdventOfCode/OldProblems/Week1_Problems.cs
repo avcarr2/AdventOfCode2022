@@ -38,7 +38,6 @@ namespace AdventOfCode
             return false;
         }
 
-
         public static Stack<T> ReverseStack<T>(Stack<T> forwardStack)
         {
             Stack<T> reverseStack = new();
